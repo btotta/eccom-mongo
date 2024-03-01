@@ -1,25 +1,35 @@
 package server
 
 import (
-	"github.com/gin-gonic/gin"
+	"eccom-mongo/internal/controller"
+	"eccom-mongo/internal/database"
+	"eccom-mongo/internal/middleware"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+
+	docs "eccom-mongo/cmd/api/docs"
+
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := gin.Default()
-	r.GET("/", s.HelloWorldHandler)
-	r.GET("/health", s.healthHandler)
+
+	docs.SwaggerInfo.BasePath = "/"
+
+	userController := controller.NewUserController(database.NewUserDAO(s.db.GetDB()))
+	healthController := controller.NewHealthController(&s.db)
+
+	// Public routes
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	r.GET("/health", healthController.HealthHandler)
+	r.POST("/user", userController.CreateUser)
+	r.POST("/user/login", userController.LoginUser)
+
+	// Private routes
+	r.Use(middleware.NewAuthenticationMiddleware(database.NewUserDAO(s.db.GetDB())).Authenticate)
 
 	return r
-}
-
-func (s *Server) HelloWorldHandler(c *gin.Context) {
-	resp := make(map[string]string)
-	resp["message"] = "Hello World"
-
-	c.JSON(http.StatusOK, resp)
-}
-
-func (s *Server) healthHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, s.db.Health())
 }
