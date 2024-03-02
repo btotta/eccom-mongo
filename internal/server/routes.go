@@ -27,6 +27,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Use(middleware.NewAuthenticationMiddleware(s.userDAO).Authenticate)
 
 	r.POST("/address", s.addressCtrl.CreateAddress)
+	r.GET("/address", s.addressCtrl.GetAllAddress)
+	r.GET("/address/:id", s.addressCtrl.GetAddress)
+	r.DELETE("/address/:id", s.addressCtrl.DeleteAddress)
+	r.PUT("/address/:id/main", s.addressCtrl.MarkAddressAsMain)
 
 	return r
 }

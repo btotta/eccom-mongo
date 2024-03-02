@@ -1,6 +1,8 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Address struct {
 	ID           primitive.ObjectID `bson:"_id,omitempty"`
@@ -12,7 +14,6 @@ type Address struct {
 	State        string             `bson:"state"`
 	Country      string             `bson:"country"`
 	ZipCode      string             `bson:"zip_code"`
-	MainAddress  bool               `bson:"main_address, default:false"`
+	MainAddress  bool               `bson:"main_address"`
+	UserID       primitive.ObjectID `bson:"user_id"`
 }
-
-

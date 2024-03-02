@@ -1,5 +1,47 @@
 definitions:
-  controller.userLoginRequest:
+  dtos.AddressDTO:
+    properties:
+      city:
+        type: string
+      complement:
+        type: string
+      country:
+        type: string
+      id:
+        type: string
+      main_address:
+        type: boolean
+      neighborhood:
+        type: string
+      number:
+        type: string
+      state:
+        type: string
+      street:
+        type: string
+      zip_code:
+        type: string
+    required:
+    - city
+    - country
+    - neighborhood
+    - number
+    - state
+    - street
+    - zip_code
+    type: object
+  dtos.UserDTO:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      lastName:
+        type: string
+      name:
+        type: string
+    type: object
+  dtos.UserLoginDTO:
     properties:
       email:
         type: string
@@ -9,14 +51,14 @@ definitions:
     - email
     - password
     type: object
-  controller.userLoginResponse:
+  dtos.UserLoginResponseDTO:
     properties:
       refresh_token:
         type: string
       token:
         type: string
     type: object
-  controller.userRegisterRequest:
+  dtos.UserRegisterDTO:
     properties:
       confirm_password:
         type: string
@@ -38,33 +80,6 @@ definitions:
     - name
     - password
     type: object
-  dtos.AddressRegisterRequest:
-    properties:
-      city:
-        type: string
-      complement:
-        type: string
-      country:
-        type: string
-      neighborhood:
-        type: string
-      number:
-        type: string
-      state:
-        type: string
-      street:
-        type: string
-      zip_code:
-        type: string
-    required:
-    - city
-    - country
-    - neighborhood
-    - number
-    - state
-    - street
-    - zip_code
-    type: object
   models.Address:
     properties:
       city:
@@ -85,6 +100,8 @@ definitions:
         type: string
       street:
         type: string
+      userID:
+        type: string
       zipCode:
         type: string
     type: object
@@ -92,6 +109,24 @@ info:
   contact: {}
 paths:
   /address:
+    get:
+      consumes:
+      - application/json
+      description: Get all addresses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dtos.AddressDTO'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get all addresses
+      tags:
+      - address
     post:
       consumes:
       - application/json
@@ -102,7 +137,7 @@ paths:
         name: address
         required: true
         schema:
-          $ref: '#/definitions/dtos.AddressRegisterRequest'
+          $ref: '#/definitions/dtos.AddressDTO'
       produces:
       - application/json
       responses:
@@ -111,6 +146,74 @@ paths:
           schema:
             $ref: '#/definitions/models.Address'
       summary: Create an address
+      tags:
+      - address
+  /address/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an address
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Address deleted
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Delete an address
+      tags:
+      - address
+    get:
+      consumes:
+      - application/json
+      description: Get an address
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.AddressDTO'
+      security:
+      - ApiKeyAuth: []
+      summary: Get an address
+      tags:
+      - address
+  /address/{id}/main:
+    put:
+      consumes:
+      - application/json
+      description: Mark an address as default
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Mark an address as default
       tags:
       - address
   /health:
@@ -139,14 +242,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/controller.userRegisterRequest'
+          $ref: '#/definitions/dtos.UserRegisterDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/dtos.UserDTO'
         "400":
           description: Bad Request
           schema:
@@ -165,14 +268,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/controller.userLoginRequest'
+          $ref: '#/definitions/dtos.UserLoginDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/controller.userLoginResponse'
+            $ref: '#/definitions/dtos.UserLoginResponseDTO'
         "400":
           description: Bad Request
           schema:

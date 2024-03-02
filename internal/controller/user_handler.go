@@ -4,6 +4,7 @@ import (
 	"eccom-mongo/internal/database"
 	"eccom-mongo/internal/middleware"
 	"eccom-mongo/internal/models"
+	"eccom-mongo/internal/models/dtos"
 	"eccom-mongo/internal/utils"
 	"net/http"
 
@@ -30,36 +31,17 @@ func NewUserController(userDAO database.UserDAOInterface) UserHandler {
 	}
 }
 
-type userRegisterRequest struct {
-	Name            string `json:"name" binding:"required"`
-	LastName        string `json:"last_name" binding:"required"`
-	Document        string `json:"document" binding:"required"`
-	Email           string `json:"email" binding:"required"`
-	Password        string `json:"password" binding:"required"`
-	ConfirmPassword string `json:"confirm_password" binding:"required"`
-}
-
-type userLoginRequest struct {
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
-type userLoginResponse struct {
-	Token        string `json:"token"`
-	RefreshToken string `json:"refresh_token"`
-}
-
 // @Summary Create user
 // @Description Create a new user
 // @Tags user
 // @Accept json
 // @Produce json
-// @Param user body userRegisterRequest true "User data"
-// @Success 200 {object} string
+// @Param user body dtos.UserRegisterDTO true "User data"
+// @Success 200 {object} dtos.UserDTO
 // @Failure 400 {object} string
 // @Router /user [post]
 func (uh *userHandler) CreateUser(c *gin.Context) {
-	var userCreate userRegisterRequest
+	var userCreate dtos.UserRegisterDTO
 	if err := c.ShouldBindJSON(&userCreate); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -122,7 +104,7 @@ func (uh *userHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "user created successfully"})
+	c.JSON(http.StatusOK, dtos.NewUserDTO(&newUser))
 }
 
 // @Summary Login user
@@ -130,12 +112,12 @@ func (uh *userHandler) CreateUser(c *gin.Context) {
 // @Tags user
 // @Accept json
 // @Produce json
-// @Param user body userLoginRequest true "User data"
-// @Success 200 {object} userLoginResponse
+// @Param user body dtos.UserLoginDTO true "User data"
+// @Success 200 {object} dtos.UserLoginResponseDTO
 // @Failure 400 {object} string
 // @Router /user/login [post]
 func (uh *userHandler) LoginUser(c *gin.Context) {
-	var userLogin userLoginRequest
+	var userLogin dtos.UserLoginDTO
 	if err := c.ShouldBindJSON(&userLogin); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -165,7 +147,7 @@ func (uh *userHandler) LoginUser(c *gin.Context) {
 		return
 	}
 
-	body := userLoginResponse{
+	body := dtos.UserLoginResponseDTO{
 		Token:        token,
 		RefreshToken: refresh,
 	}

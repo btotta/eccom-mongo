@@ -48,7 +48,7 @@ func (am *authenticationMiddleware) Authenticate(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Falha ao analisar o token de autenticação"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autenticação inválido"})
 		c.Abort()
 		return
 	}
@@ -62,13 +62,13 @@ func (am *authenticationMiddleware) Authenticate(c *gin.Context) {
 
 	user, err := am.userDAO.FindByEmail(c, claims.Email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar usuário no banco de dados"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Token de autenticação inválido"})
 		c.Abort()
 		return
 	}
 
 	if user == nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não encontrado"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Token de autenticação inválido"})
 		c.Abort()
 		return
 	}

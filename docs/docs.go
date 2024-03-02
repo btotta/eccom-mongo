@@ -16,6 +16,35 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/address": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all addresses",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Get all addresses",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dtos.AddressDTO"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create an address",
                 "consumes": [
@@ -35,7 +64,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dtos.AddressRegisterRequest"
+                            "$ref": "#/definitions/dtos.AddressDTO"
                         }
                     }
                 ],
@@ -44,6 +73,115 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Address"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get an address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Get an address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.AddressDTO"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete an address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Delete an address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Address deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/{id}/main": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mark an address as default",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "address"
+                ],
+                "summary": "Mark an address as default",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -92,7 +230,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.userRegisterRequest"
+                            "$ref": "#/definitions/dtos.UserRegisterDTO"
                         }
                     }
                 ],
@@ -100,7 +238,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/dtos.UserDTO"
                         }
                     },
                     "400": {
@@ -132,7 +270,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.userLoginRequest"
+                            "$ref": "#/definitions/dtos.UserLoginDTO"
                         }
                     }
                 ],
@@ -140,7 +278,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/controller.userLoginResponse"
+                            "$ref": "#/definitions/dtos.UserLoginResponseDTO"
                         }
                     },
                     "400": {
@@ -154,7 +292,68 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controller.userLoginRequest": {
+        "dtos.AddressDTO": {
+            "type": "object",
+            "required": [
+                "city",
+                "country",
+                "neighborhood",
+                "number",
+                "state",
+                "street",
+                "zip_code"
+            ],
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "complement": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "main_address": {
+                    "type": "boolean"
+                },
+                "neighborhood": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "street": {
+                    "type": "string"
+                },
+                "zip_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.UserDTO": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.UserLoginDTO": {
             "type": "object",
             "required": [
                 "email",
@@ -169,7 +368,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.userLoginResponse": {
+        "dtos.UserLoginResponseDTO": {
             "type": "object",
             "properties": {
                 "refresh_token": {
@@ -180,7 +379,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.userRegisterRequest": {
+        "dtos.UserRegisterDTO": {
             "type": "object",
             "required": [
                 "confirm_password",
@@ -207,44 +406,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "dtos.AddressRegisterRequest": {
-            "type": "object",
-            "required": [
-                "city",
-                "country",
-                "neighborhood",
-                "number",
-                "state",
-                "street",
-                "zip_code"
-            ],
-            "properties": {
-                "city": {
-                    "type": "string"
-                },
-                "complement": {
-                    "type": "string"
-                },
-                "country": {
-                    "type": "string"
-                },
-                "neighborhood": {
-                    "type": "string"
-                },
-                "number": {
-                    "type": "string"
-                },
-                "state": {
-                    "type": "string"
-                },
-                "street": {
-                    "type": "string"
-                },
-                "zip_code": {
                     "type": "string"
                 }
             }
@@ -277,6 +438,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "street": {
+                    "type": "string"
+                },
+                "userID": {
                     "type": "string"
                 },
                 "zipCode": {
