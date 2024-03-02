@@ -2,6 +2,8 @@ import request from 'supertest';
 import { CreateUserRequest } from './model/user_request';
 
 declare const BASE_URL: string;
+declare const TEST_EMAIL: string;
+declare const TEST_PASSWORD: string;
 
 describe('Testing the creation of a user', () => {
 
@@ -74,7 +76,7 @@ describe('Testing the login of a user', () => {
 
         await request(BASE_URL).post('/user').send(user);
 
-        const res = await request(BASE_URL).post('/user/login').send({ email: user.email, password: user.password });
+        const res = await request(BASE_URL).post('/user/login').send({ email: TEST_EMAIL, password: TEST_PASSWORD });
 
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty("refresh_token");
