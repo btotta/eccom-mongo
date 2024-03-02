@@ -1,12 +1,37 @@
 package utils
 
 import (
+	"eccom-mongo/internal/models"
+	"net/http"
 	"regexp"
 	"strings"
 	"unicode"
 
+	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
+
+func getUserFromContext(c *gin.Context) (*models.User, bool) {
+	user, exists := c.Get("user")
+	if !exists {
+		return nil, false
+	}
+
+	userModel, ok := user.(*models.User)
+	if !ok {
+		return nil, false
+	}
+	return userModel, true
+}
+
+func ExtractUserFromRequest(c *gin.Context) *models.User {
+	user, exists := getUserFromContext(c)
+	if !exists {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return nil
+	}
+	return user
+}
 
 func ValidatePassword(password string, username string) bool {
 	if len(password) < 8 {

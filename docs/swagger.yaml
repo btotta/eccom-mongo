@@ -38,9 +38,81 @@ definitions:
     - name
     - password
     type: object
+  dtos.AddressRegisterRequest:
+    properties:
+      city:
+        type: string
+      complement:
+        type: string
+      country:
+        type: string
+      neighborhood:
+        type: string
+      number:
+        type: string
+      state:
+        type: string
+      street:
+        type: string
+      zip_code:
+        type: string
+    required:
+    - city
+    - country
+    - neighborhood
+    - number
+    - state
+    - street
+    - zip_code
+    type: object
+  models.Address:
+    properties:
+      city:
+        type: string
+      complement:
+        type: string
+      country:
+        type: string
+      id:
+        type: string
+      mainAddress:
+        type: boolean
+      neighborhood:
+        type: string
+      number:
+        type: string
+      state:
+        type: string
+      street:
+        type: string
+      zipCode:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
+  /address:
+    post:
+      consumes:
+      - application/json
+      description: Create an address
+      parameters:
+      - description: Address to be created
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.AddressRegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Address'
+      summary: Create an address
+      tags:
+      - address
   /health:
     get:
       consumes:

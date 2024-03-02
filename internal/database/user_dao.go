@@ -21,6 +21,7 @@ type UserDAOInterface interface {
 	Update(ctx context.Context, user *models.User) error
 	Delete(ctx context.Context, id string) error
 	FindAll(ctx context.Context) ([]models.User, error)
+	AddAddress(ctx context.Context, email string, addressID primitive.ObjectID) error
 }
 
 type userDAO struct {
@@ -103,4 +104,20 @@ func (dao *userDAO) FindAll(ctx context.Context) ([]models.User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func (dao *userDAO) AddAddress(ctx context.Context, email string, addressID primitive.ObjectID) error {
+
+	user, err := dao.FindByEmail(ctx, email)
+	if err != nil {
+		return err
+	}
+
+	user.Address = append(user.Address, addressID)
+	err = dao.Update(ctx, user)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

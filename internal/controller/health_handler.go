@@ -7,12 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type HealthHandler struct {
+type HealthHandler interface {
+	HealthHandler(c *gin.Context)
+}
+
+type healthHandler struct {
 	db database.Service
 }
 
-func NewHealthController(db *database.Service) *HealthHandler {
-	return &HealthHandler{db: *db}
+func NewHealthController(db database.Service) HealthHandler {
+	return &healthHandler{db: db}
 }
 
 // @Summary Health check
@@ -22,6 +26,6 @@ func NewHealthController(db *database.Service) *HealthHandler {
 // @Produce json
 // @Success 200 {object} string
 // @Router /health [get]
-func (h *HealthHandler) HealthHandler(c *gin.Context) {
+func (h *healthHandler) HealthHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, h.db.Health())
 }
