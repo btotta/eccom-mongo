@@ -4,6 +4,7 @@ import (
 	"eccom-mongo/internal/database"
 	"eccom-mongo/internal/middleware"
 	"eccom-mongo/internal/models"
+	"eccom-mongo/internal/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,9 +31,9 @@ func NewUserController(userDAO database.UserDAOInterface) UserHandler {
 }
 
 type userRegisterRequest struct {
-	Nome            string `json:"nome" binding:"required"`
-	Sobrenome       string `json:"sobrenome" binding:"required"`
-	CPF             string `json:"documento" binding:"required"`
+	Name            string `json:"name" binding:"required"`
+	LastName        string `json:"last_name" binding:"required"`
+	Document        string `json:"document" binding:"required"`
 	Email           string `json:"email" binding:"required"`
 	Password        string `json:"password" binding:"required"`
 	ConfirmPassword string `json:"confirm_password" binding:"required"`
@@ -41,6 +42,11 @@ type userRegisterRequest struct {
 type userLoginRequest struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
+}
+
+type userLoginResponse struct {
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 // @Summary Create user
@@ -60,41 +66,52 @@ func (uh *userHandler) CreateUser(c *gin.Context) {
 	}
 
 	if userCreate.Password != userCreate.ConfirmPassword {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "password and confirm password do not match"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "this password cannot be used"})
 		return
 	}
 
-	passwordHash, err := hashBcrypt(userCreate.Password)
+	if !utils.ValidatePassword(userCreate.Password, userCreate.Email) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "this password cannot be used"})
+		return
+	}
+
+	if !utils.ValidateEmail(userCreate.Email) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "this email cannot be used"})
+		return
+	}
+
+	passwordHash, err := utils.HashBcrypt(userCreate.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "error hashing password"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "this password cannot be used"})
 		return
 	}
 
 	user, err := uh.userDAO.FindByEmail(c, userCreate.Email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "error checking if user exists"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "this email cannot be used"})
 		return
 	}
 
 	if user != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "user already exists"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "this email cannot be used"})
 		return
 	}
 
-	user, err = uh.userDAO.FindByCPF(c, userCreate.CPF)
+	user, err = uh.userDAO.FindByCPF(c, userCreate.Document)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "error checking if CPF exists"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "this document cannot be used"})
 		return
 	}
 
 	if user != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "CPF already exists"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "this document cannot be used"})
 		return
 	}
 
 	newUser := models.User{
-		Nome:         userCreate.Nome,
-		CPF:          userCreate.CPF,
+		Name:         userCreate.Name,
+		LastName:     userCreate.LastName,
+		Document:     userCreate.Document,
 		Email:        userCreate.Email,
 		PasswordHash: passwordHash,
 	}
@@ -108,21 +125,13 @@ func (uh *userHandler) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "user created successfully"})
 }
 
-func hashBcrypt(password string) (string, error) {
-	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
-	return string(hashedBytes), nil
-}
-
 // @Summary Login user
 // @Description Login user
 // @Tags user
 // @Accept json
 // @Produce json
 // @Param user body userLoginRequest true "User data"
-// @Success 200 {object} string
+// @Success 200 {object} userLoginResponse
 // @Failure 400 {object} string
 // @Router /user/login [post]
 func (uh *userHandler) LoginUser(c *gin.Context) {
@@ -133,19 +142,14 @@ func (uh *userHandler) LoginUser(c *gin.Context) {
 	}
 
 	user, err := uh.userDAO.FindByEmail(c, userLogin.Email)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "error checking if user exists"})
-		return
-	}
-
-	if user == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "user does not exist"})
+	if err != nil || user == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid login credentials"})
 		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(userLogin.Password))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid password"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid login credentials"})
 		return
 	}
 
@@ -161,9 +165,9 @@ func (uh *userHandler) LoginUser(c *gin.Context) {
 		return
 	}
 
-	body := gin.H{
-		"token":         token,
-		"refresh_token": refresh,
+	body := userLoginResponse{
+		Token:        token,
+		RefreshToken: refresh,
 	}
 
 	c.JSON(http.StatusOK, body)

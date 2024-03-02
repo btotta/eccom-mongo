@@ -106,7 +106,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controller.userLoginResponse"
                         }
                     },
                     "400": {
@@ -135,33 +135,44 @@ const docTemplate = `{
                 }
             }
         },
+        "controller.userLoginResponse": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "controller.userRegisterRequest": {
             "type": "object",
             "required": [
                 "confirm_password",
-                "documento",
+                "document",
                 "email",
-                "nome",
-                "password",
-                "sobrenome"
+                "last_name",
+                "name",
+                "password"
             ],
             "properties": {
                 "confirm_password": {
                     "type": "string"
                 },
-                "documento": {
+                "document": {
                     "type": "string"
                 },
                 "email": {
                     "type": "string"
                 },
-                "nome": {
+                "last_name": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                },
-                "sobrenome": {
                     "type": "string"
                 }
             }

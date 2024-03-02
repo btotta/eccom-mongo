@@ -24,3 +24,7 @@ tmp/
 
 # .env file
 .env
+
+# Node Modules folder
+node_modules/
+

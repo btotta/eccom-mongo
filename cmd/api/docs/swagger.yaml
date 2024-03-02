@@ -9,27 +9,34 @@ definitions:
     - email
     - password
     type: object
+  controller.userLoginResponse:
+    properties:
+      refresh_token:
+        type: string
+      token:
+        type: string
+    type: object
   controller.userRegisterRequest:
     properties:
       confirm_password:
         type: string
-      documento:
+      document:
         type: string
       email:
         type: string
-      nome:
+      last_name:
+        type: string
+      name:
         type: string
       password:
         type: string
-      sobrenome:
-        type: string
     required:
     - confirm_password
-    - documento
+    - document
     - email
-    - nome
+    - last_name
+    - name
     - password
-    - sobrenome
     type: object
 info:
   contact: {}
@@ -93,7 +100,7 @@ paths:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/controller.userLoginResponse'
         "400":
           description: Bad Request
           schema:
