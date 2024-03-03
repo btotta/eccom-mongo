@@ -1,0 +1,26 @@
+# Configuração principal do Traefik
+api:
+  dashboard: true
+
+# Configurações de entrada e saída
+entryPoints:
+  web:
+    address: ":80"
+
+  websecure:
+    address: ":443"
+
+# Configuração de roteamento
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+
+# Configuração de certificados SSL usando Let's Encrypt
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: bruno.ttota@gmail.com
+      storage: /letsencrypt/acme.json
+      httpChallenge:
+        entryPoint: web
