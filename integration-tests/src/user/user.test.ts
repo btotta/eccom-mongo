@@ -21,7 +21,10 @@ describe('Testing the creation of a user', () => {
         const res = await request(BASE_URL).post('/user').send(user);
 
         expect(res.status).toBe(200);
-        expect(res.body).toHaveProperty("message", "user created successfully");
+        expect(res.body).toHaveProperty("id");
+        expect(res.body).toHaveProperty("email");
+        expect(res.body).toHaveProperty("name");
+        expect(res.body).toHaveProperty("last_name");
     });
 
     it('With invalid email, should return status 400 and a JSON object', async () => {

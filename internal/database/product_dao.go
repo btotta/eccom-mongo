@@ -20,7 +20,7 @@ type productDAO struct {
 
 func NewProductDAO(mongoDB *mongo.Database) *productDAO {
 	return &productDAO{
-		collection: mongoDB.Collection("product"),
+		collection: mongoDB.Collection("products"),
 	}
 }
 

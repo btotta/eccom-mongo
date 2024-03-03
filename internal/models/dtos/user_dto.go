@@ -3,10 +3,10 @@ package dtos
 import "eccom-mongo/internal/models"
 
 type UserDTO struct {
-	ID       string `bson:"_id,omitempty"`
-	Name     string `bson:"name"`
-	LastName string `bson:"last_name"`
-	Email    string `bson:"email"`
+	ID       string `json:"id,omitempty"`
+	Name     string `json:"name"`
+	LastName string `json:"last_name"`
+	Email    string `json:"email"`
 }
 
 type UserRegisterDTO struct {

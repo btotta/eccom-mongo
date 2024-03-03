@@ -76,7 +76,7 @@ definitions:
         type: string
       id:
         type: string
-      lastName:
+      last_name:
         type: string
       name:
         type: string

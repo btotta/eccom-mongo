@@ -532,7 +532,7 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "lastName": {
+                "last_name": {
                     "type": "string"
                 },
                 "name": {

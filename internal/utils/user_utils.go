@@ -95,3 +95,17 @@ func ValidateEmail(email string) bool {
 	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 	return emailRegex.MatchString(email)
 }
+
+func HasAdminRole(user *models.User) bool {
+
+	if user == nil || user.Roles == nil {
+		return false
+	}
+
+	for _, role := range user.Roles {
+		if role == models.RoleAdmin {
+			return true
+		}
+	}
+	return false
+}
