@@ -22,6 +22,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/health", s.healthCtrl.HealthHandler)
 	r.POST("/user", s.userCtrl.CreateUser)
 	r.POST("/user/login", s.userCtrl.LoginUser)
+	r.POST("/user/refresh-token", s.userCtrl.RefreshToken)
 
 	// Private routes
 	r.Use(middleware.NewAuthenticationMiddleware(s.userDAO).Authenticate)

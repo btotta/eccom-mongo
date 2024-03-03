@@ -23,6 +23,7 @@ type AuthenticationMiddleware interface {
 	Authenticate(c *gin.Context)
 	GenerateJwtToken(email string) (string, error)
 	GenerateJwtRefreshToken(email string) (string, error)
+	GenerateJwtTokenFromRefreshToken(refreshToken string) (string, error)
 }
 
 type authenticationMiddleware struct {
@@ -96,7 +97,7 @@ func (am *authenticationMiddleware) GenerateJwtToken(email string) (string, erro
 }
 
 func (am *authenticationMiddleware) GenerateJwtRefreshToken(email string) (string, error) {
-	expirationTime := time.Now().Add(6 * time.Hour)
+	expirationTime := time.Now().Add(2 * time.Hour)
 	claims := &Claims{
 		Email: email,
 		StandardClaims: jwt.StandardClaims{
@@ -111,4 +112,21 @@ func (am *authenticationMiddleware) GenerateJwtRefreshToken(email string) (strin
 	}
 
 	return tokenString, nil
+}
+
+func (am *authenticationMiddleware) GenerateJwtTokenFromRefreshToken(refreshToken string) (string, error) {
+	token, err := jwt.ParseWithClaims(refreshToken, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return secretKey, nil
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	claims, ok := token.Claims.(*Claims)
+	if !ok || !token.Valid {
+		return "", err
+	}
+
+	return am.GenerateJwtToken(claims.Email)
 }

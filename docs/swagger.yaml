@@ -283,4 +283,21 @@ paths:
       summary: Login user
       tags:
       - user
+  /user/refresh-token:
+    post:
+      description: Refresh token
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dtos.UserLoginResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: Refresh token
+      tags:
+      - user
 swagger: "2.0"

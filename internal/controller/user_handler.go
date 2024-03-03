@@ -15,6 +15,7 @@ import (
 type UserHandler interface {
 	CreateUser(c *gin.Context)
 	LoginUser(c *gin.Context)
+	RefreshToken(c *gin.Context)
 	// EditUser(c *gin.Context)
 	// ChangePasswordUser(c *gin.Context)
 	// DeleteUser(c *gin.Context)
@@ -153,4 +154,36 @@ func (uh *userHandler) LoginUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, body)
+}
+
+// @Summary Refresh token
+// @Description Refresh token
+// @Tags user
+// @Produces json
+// @Security ApiKeyAuth
+// @Success 200 {object} dtos.UserLoginResponseDTO
+// @Failure 400 {object} string
+// @Router /user/refresh-token [post]
+func (uh *userHandler) RefreshToken(c *gin.Context) {
+
+	refreshToken := c.GetHeader("refresh")
+	if refreshToken == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Refresh token not provided"})
+		c.Abort()
+		return
+	}
+
+	token, err := middleware.NewAuthenticationMiddleware(uh.userDAO).GenerateJwtTokenFromRefreshToken(refreshToken)
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid refresh token"})
+		c.Abort()
+		return
+	}
+
+	c.JSON(http.StatusOK, dtos.UserLoginResponseDTO{
+		Token:        token,
+		RefreshToken: refreshToken,
+	})
+
 }
