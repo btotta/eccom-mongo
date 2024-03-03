@@ -23,6 +23,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.POST("/user", s.userCtrl.CreateUser)
 	r.POST("/user/login", s.userCtrl.LoginUser)
 	r.POST("/user/refresh-token", s.userCtrl.RefreshToken)
+	r.GET("/product/{sku}", s.productCtrl.GetProduct)
+	r.GET("/product/{terms}", s.productCtrl.SearchProduct)
 
 	// Private routes
 	r.Use(middleware.NewAuthenticationMiddleware(s.userDAO).Authenticate)

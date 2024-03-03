@@ -72,7 +72,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Address"
+                            "$ref": "#/definitions/dtos.AddressDTO"
                         }
                     }
                 }
@@ -205,6 +205,107 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/product": {
+            "post": {
+                "description": "Create a product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Create a product",
+                "parameters": [
+                    {
+                        "description": "Product",
+                        "name": "product",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ProductDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ProductDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{sku}": {
+            "get": {
+                "description": "Get a product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Get a product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product SKU",
+                        "name": "sku",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.ProductDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/{terms}": {
+            "get": {
+                "description": "Search a product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Search a product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search terms",
+                        "name": "terms",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dtos.ProductDTO"
+                            }
                         }
                     }
                 }
@@ -364,6 +465,64 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.ProductDTO": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "name_url",
+                "principal_image",
+                "quantity",
+                "sku"
+            ],
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "brands": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "categorys": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "name_url": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "principal_image": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "sku": {
+                    "type": "string"
+                }
+            }
+        },
         "dtos.UserDTO": {
             "type": "object",
             "properties": {
@@ -434,44 +593,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Address": {
-            "type": "object",
-            "properties": {
-                "city": {
-                    "type": "string"
-                },
-                "complement": {
-                    "type": "string"
-                },
-                "country": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "mainAddress": {
-                    "type": "boolean"
-                },
-                "neighborhood": {
-                    "type": "string"
-                },
-                "number": {
-                    "type": "string"
-                },
-                "state": {
-                    "type": "string"
-                },
-                "street": {
-                    "type": "string"
-                },
-                "userID": {
-                    "type": "string"
-                },
-                "zipCode": {
                     "type": "string"
                 }
             }

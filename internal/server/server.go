@@ -21,6 +21,7 @@ type Server struct {
 	healthCtrl  controller.HealthHandler
 	userCtrl    controller.UserHandler
 	addressCtrl controller.AddressHandler
+	productCtrl controller.ProductHandler
 }
 
 func NewServer() *http.Server {
@@ -37,11 +38,13 @@ func NewServer() *http.Server {
 	// Initialize DAOs
 	userDAO := database.NewUserDAO(db.GetDB())
 	addressDAO := database.NewAddressDAO(db.GetDB())
+	productDAO := database.NewProductDAO(db.GetDB())
 
 	// Initialize controllers
 	healthCtrl := controller.NewHealthController(db)
 	userCtrl := controller.NewUserController(userDAO)
 	addressCtrl := controller.NewAddressController(addressDAO, userDAO)
+	productCtrl := controller.NewProductController(productDAO)
 
 	server := &Server{
 		port:        port,
@@ -51,6 +54,7 @@ func NewServer() *http.Server {
 		healthCtrl:  healthCtrl,
 		userCtrl:    userCtrl,
 		addressCtrl: addressCtrl,
+		productCtrl: productCtrl,
 	}
 
 	return &http.Server{

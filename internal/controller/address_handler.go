@@ -34,7 +34,7 @@ func NewAddressController(addressDAO database.AddressDAOInterface, userDAO datab
 // @Accept json
 // @Produce json
 // @Param address body dtos.AddressDTO true "Address to be created"
-// @Success 200 {object} models.Address
+// @Success 200 {object} dtos.AddressDTO
 // @Router /address [post]
 func (a *addressHandler) CreateAddress(c *gin.Context) {
 
