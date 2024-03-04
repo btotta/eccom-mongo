@@ -4,6 +4,13 @@ services:
     build:
       context: .
     container_name: eccom-api
-    restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8080"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.eccom-api.rule=Host(`tottadev.com.br`) && PathPrefix(`/api-eccom`)"
+      - "traefik.http.services.eccom-api.loadbalancer.server.port=8080"
