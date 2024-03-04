@@ -3,9 +3,11 @@ services:
   app:
     build:
       context: .
+    networks:
+      - traefik_public
     container_name: eccom-api
     ports:
-      - "8001"
+      - "8080"
     deploy:
       replicas: 1
       restart_policy:
