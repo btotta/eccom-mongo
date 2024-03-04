@@ -1,0 +1,14 @@
+{
+    "name": "integration-tests",
+    "version": "1.0.0",
+    "description": "",
+    "main": "jest.config.js",
+    "dependencies": {},
+    "devDependencies": {},
+    "scripts": {
+        "test": "LOCAL=true jest",
+        "--server": "LOCAL=true jest"
+    },
+    "author": "",
+    "license": "ISC"
+}
