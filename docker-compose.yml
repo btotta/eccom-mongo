@@ -5,7 +5,7 @@ services:
       context: .
     container_name: eccom-api
     ports:
-      - "8080"
+      - "8001"
     deploy:
       replicas: 1
       restart_policy:
@@ -13,4 +13,4 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.eccom-api.rule=Host(`tottadev.com.br`) && PathPrefix(`/api-eccom`)"
-      - "traefik.http.services.eccom-api.loadbalancer.server.port=8080"
+      - "traefik.http.services.eccom-api.loadbalancer.server.port=8001"
