@@ -3,21 +3,12 @@ services:
   app:
     build:
       context: .
-    networks:
-      - traefik_public
     container_name: eccom-api
-    ports:
+    expose:
       - "8080"
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: any
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.eccom-api.rule=Host(`tottadev.com.br`) && PathPrefix(`/api-eccom`)"
-      - "traefik.http.services.eccom-api.loadbalancer.server.port=8001"
-
+    networks:
+      - nginx_default
 
 networks:
-  traefik_public:
+  nginx_default:
     external: true
