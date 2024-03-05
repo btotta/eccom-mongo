@@ -19,7 +19,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// Public routes
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	r.GET("/health", s.healthCtrl.HealthHandler)
+	r.GET("/health", s.healthCtrl.HealthHandler) // Health check
+	r.GET("/", s.healthCtrl.HealthHandler) 	  // Health check
 	r.POST("/user", s.userCtrl.CreateUser)
 	r.POST("/user/login", s.userCtrl.LoginUser)
 	r.POST("/user/refresh-token", s.userCtrl.RefreshToken)
