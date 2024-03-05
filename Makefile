@@ -38,6 +38,14 @@ test:
 	@echo "Testing..."
 	@go test ./tests -v
 
+test-serv:
+	@echo "Running integration tests..."
+	@cd integration-tests && npm run test --server
+
+test-int:
+	@echo "Running integration tests..."
+	@cd integration-tests && npm run test	
+
 # Clean the binary
 clean:
 	@echo "Cleaning..."
